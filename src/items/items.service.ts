@@ -5,6 +5,11 @@ import { EntityManager} from 'typeorm';
 import { Item } from './entities/item.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Listing } from './entities/listing.entity';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { Comment } from './entities/comment.entity';
+import { Tag } from './entities/tags.entity';
+
 
 @Injectable()
 export class ItemsService {
@@ -15,8 +20,19 @@ export class ItemsService {
        ){}
 
    async create(createItemDto: CreateItemDto) {
-    const item = new Item(createItemDto);
-     return await this.entityManager.save(item);
+     const listing =  new Listing({
+       ...createItemDto.listing , rating:0
+      });
+ 
+    const tags = createItemDto.tags.map((tag)=> new Tag(tag))
+
+    const item = new Item({
+      ...createItemDto,
+        comments:[],
+         tags,
+          listing
+    });
+     return  this.entityManager.save(item);
   }
 
    async findAll() {
@@ -24,16 +40,30 @@ export class ItemsService {
   }
 
   findOne(id: number) {
-    return this.itemsRepository.findOneBy({id});
+    return this.itemsRepository.findOne({
+      where:{id} , 
+      relations:{ listing : true  , comments: true , tags:true},
+    });
   }
 
  async update(id: number, updateItemDto: UpdateItemDto) {
      const item = await this.itemsRepository.findOneBy({id});
-     item.public = updateItemDto.public
-     await this.entityManager.save(item)
+     item.public = updateItemDto.public;
+     
+    //   const comments = updateItemDto.comments.map((w)=> new Comment(w))
+    //  item.comments = comments;
+    if (updateItemDto.comments) {
+      const comments  = updateItemDto.comments.map((c) => new Comment(c));
+      // console.log(updateItemDto.comments);
+    
+    item.comments = comments;
+     }
+  
+      return await this.entityManager.save(item)
   }
+ 
 
-   async remove(id: number) {
-     await this.itemsRepository.delete(id);;
+async remove(id: number) {
+     await this.itemsRepository.delete(id);
   }
 }

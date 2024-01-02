@@ -2,6 +2,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigService } from '@nestjs/config';
 import { Item } from "../items/entities/item.entity";
+import { Listing } from '../items/entities/listing.entity';
+import { Comment } from '../items/entities/comment.entity';
+import { Tag } from '../items/entities/tags.entity';
+
+
+
 @Module({
 imports : [
 
@@ -17,7 +23,7 @@ imports : [
           autoLoadEntites:true,
           synchronize:configService.getOrThrow('POSTGRES_SYNCHRONIZE'),
           
-          entities: [Item]
+         entities: [Item,Listing, Comment , Tag]
         }),
     })
 ]
