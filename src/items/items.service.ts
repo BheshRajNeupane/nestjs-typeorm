@@ -56,7 +56,7 @@ export class ItemsService {
 
     // return await this.entityManager.save(item);
 
-    await this.enityManager.transaction(async (entityManager) => {
+    await this.entityManager.transaction(async (entityManager) => {
        const item = await this.itemsRepository.findOneBy({id});
        item.public = updateItemDto.public;
       if (updateItemDto.comments) {

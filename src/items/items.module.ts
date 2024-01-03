@@ -6,6 +6,7 @@ import { Item } from './entities/item.entity';
 import { Listing  } from "./entities/listing.entity";
 import { Comment } from './entities/comment.entity';
 import { Tag } from './entities/tags.entity';
+import { ItemSubscriber } from './item.subscriber';
 
 
 @Module({
@@ -14,6 +15,6 @@ import { Tag } from './entities/tags.entity';
     
   ],
   controllers: [ItemsController],
-  providers: [ItemsService],
+  providers: [ItemsService , ItemSubscriber],
 })
 export class ItemsModule {}
